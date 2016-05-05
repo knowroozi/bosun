@@ -257,6 +257,7 @@ type Alert struct {
 	UnknownsNormal   bool
 	UnjoinedOK       bool `json:",omitempty"`
 	Log              bool
+	AutoClose        bool
 	RunEvery         int
 	returnType       models.FuncType
 
@@ -950,6 +951,8 @@ func (c *Conf) loadAlert(s *parse.SectionNode) {
 			a.IgnoreUnknown = true
 		case "unknownIsNormal":
 			a.UnknownsNormal = true
+		case "autoClose":
+			a.AutoClose = true
 		case "log":
 			a.Log = true
 		case "runEvery":
