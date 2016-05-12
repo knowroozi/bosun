@@ -249,11 +249,16 @@ func (s *Schedule) runHistory(r *RunHistory, ak models.AlertKey, event *models.E
 	// auto close if configured to auto-close.
 	if !newIncident && event.Status == models.StNormal && a.AutoClose {
 		go func(ak models.AlertKey) {
-			incident.Open = false						
+			incident.Open = false
 			slog.Infof("auto close %s because returned to normal", ak)
-			err := s.ActionNotify(models.ActionClose, "bosun", "auto-closed per configuration - metric returned to normal.", []models.AlertKey{ak})
+			err := s.ActionByAlertKey("bosun", "auto-closed per configuration - metric returned to normal.", models.ActionClose, ak)
 			if err != nil {
 				slog.Errorln(err)
+			} else {
+				err := s.ActionNotify(models.ActionClose, "bosun", "auto-closed per configuration - metric returned to normal.", []models.AlertKey{ak})
+				if err != nil {
+					slog.Errorln(err)
+				}
 			}
 		}(ak)
 	}
